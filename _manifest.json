@@ -1,19 +1,19 @@
-{
+﻿{
   "manifest_version": 2,
   "id": "maibot-local-model-optimizer",
   "version": "1.0.0",
   "name": "本地模型优化 / Local Model Optimizer",
   "description": "让 Ollama 本地模型常驻不卸载，并在启动时检查 planner 是否支持工具调用、vlm 是否支持识图。Keeps Ollama models warm and validates tools/vision capabilities.",
   "author": {
-    "name": "ALLALALLALALL",
-    "url": "https://github.com/ALLALALLALALL"
+    "name": "ALLALLALLALLALLALL",
+    "url": "https://github.com/ALLALLALLALLALLALL"
   },
   "license": "MIT",
   "urls": {
-    "repository": "https://github.com/ALLALALLALALL/maibot-local-model-optimizer",
-    "homepage": "https://github.com/ALLALALLALALL/maibot-local-model-optimizer",
-    "documentation": "https://github.com/ALLALALLALALL/maibot-local-model-optimizer/blob/main/README.md",
-    "issues": "https://github.com/ALLALALLALALL/maibot-local-model-optimizer/issues"
+    "repository": "https://github.com/ALLALLALLALLALLALL/maibot-local-model-optimizer",
+    "homepage": "https://github.com/ALLALLALLALLALLALL/maibot-local-model-optimizer",
+    "documentation": "https://github.com/ALLALLALLALLALLALL/maibot-local-model-optimizer/blob/main/README.md",
+    "issues": "https://github.com/ALLALLALLALLALLALL/maibot-local-model-optimizer/issues"
   },
   "host_application": {
     "min_version": "1.0.0",
