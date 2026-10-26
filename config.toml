@@ -1,9 +1,16 @@
 [plugin]
 enabled = true
 base_url = "http://127.0.0.1:11434"
-models = "qwen2.5:14b,qwen3.5:9b,nomic-embed-text"
-planner_model = "qwen2.5:14b"
-vision_model = "qwen3.5:9b"
+# 每个人的本地模型都不一样，默认留空：
+# - models 留空时只保活当前已经加载的模型
+# - planner_model / vision_model 留空时跳过对应检查，并打印本机模型能力表
+# 按你自己的模型名填写，例如：
+# models = "my-chat-model:latest,my-embed-model:latest"
+# planner_model = "my-chat-model:latest"
+# vision_model = "my-vl-model:latest"
+models = ""
+planner_model = ""
+vision_model = ""
 keep_alive = -1
 check_interval_seconds = 120
 warmup_prompt = "hi"

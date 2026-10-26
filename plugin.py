@@ -35,16 +35,16 @@ class PluginSection(PluginConfigBase):
         description="Ollama 服务地址，可带 /v1 / Ollama base URL, /v1 is stripped",
     )
     models: str = Field(
-        default="qwen2.5:14b,qwen3.5:9b,nomic-embed-text",
-        description="需要保持加载的模型，英文逗号分隔 / Models to keep warm, comma separated",
+        default="",
+        description="需要保持加载的模型，英文逗号分隔；留空则只保活当前已加载的模型 / Models to keep warm, comma separated; empty keeps whatever is already loaded",
     )
     planner_model: str = Field(
-        default="qwen2.5:14b",
-        description="MaiBot planner 使用的模型；缺少 tools 能力时会告警 / Planner model; warns when it lacks tools",
+        default="",
+        description="MaiBot planner 使用的模型；留空跳过检查。缺少 tools 能力时会告警 / Planner model; empty skips the check. Warns when it lacks tools",
     )
     vision_model: str = Field(
-        default="qwen3.5:9b",
-        description="MaiBot vlm 使用的模型；缺少 vision 能力时会告警 / Vision model; warns when it lacks vision",
+        default="",
+        description="MaiBot vlm 使用的模型；留空跳过检查。缺少 vision 能力时会告警 / Vision model; empty skips the check. Warns when it lacks vision",
     )
     keep_alive: int = Field(
         default=-1,
@@ -122,6 +122,12 @@ class LocalModelOptimizerPlugin(MaiBotPlugin):
             loaded = await self._loaded_models(session, base)
             wanted = [m.strip() for m in cfg.models.split(",") if m.strip()]
 
+            # No explicit list: keep whatever the user already has loaded warm.
+            # Every local setup uses different model names, so there is no
+            # sensible universal default.
+            if not wanted:
+                wanted = list(loaded)
+
             if not self._capabilities_checked:
                 await self._check_capabilities(session, base)
                 self._capabilities_checked = True
@@ -188,6 +194,11 @@ class LocalModelOptimizerPlugin(MaiBotPlugin):
 
     async def _check_capabilities(self, session: aiohttp.ClientSession, base: str) -> None:
         cfg = self.config.plugin
+        if not cfg.planner_model and not cfg.vision_model:
+            # Nothing configured: print a capability table so the user can pick
+            # the right model names for their own setup.
+            await self._report_installed(session, base)
+            return
         for model, need, label in (
             (cfg.planner_model, "tools", "planner(工具调用/tool calls)"),
             (cfg.vision_model, "vision", "vlm(识图/vision)"),
@@ -213,6 +224,40 @@ class LocalModelOptimizerPlugin(MaiBotPlugin):
                 self.ctx.logger.info(
                     "[本地模型优化] ✅ %s 支持 %s", model, need
                 )
+
+    async def _installed_models(
+        self, session: aiohttp.ClientSession, base: str
+    ) -> List[str]:
+        try:
+            async with session.get(
+                f"{base}/api/tags", timeout=aiohttp.ClientTimeout(total=10)
+            ) as resp:
+                resp.raise_for_status()
+                data = await resp.json()
+            return [
+                str(item.get("name"))
+                for item in data.get("models", [])
+                if item.get("name")
+            ]
+        except Exception:  # noqa: BLE001
+            return []
+
+    async def _report_installed(self, session: aiohttp.ClientSession, base: str) -> None:
+        names = await self._installed_models(session, base)
+        if not names:
+            self.ctx.logger.info(
+                "[本地模型优化] 没有发现已安装的 Ollama 模型 / no installed Ollama models"
+            )
+            return
+        self.ctx.logger.info(
+            "[本地模型优化] 未配置 planner_model / vision_model，以下是本机模型及能力，"
+            "请按自己的模型名填写："
+        )
+        for name in names[:20]:
+            caps = await self._capabilities(session, base, name)
+            self.ctx.logger.info(
+                "  - %s: %s", name, ",".join(caps) if caps is not None else "unknown"
+            )
 
     async def _capabilities(
         self, session: aiohttp.ClientSession, base: str, model: str
