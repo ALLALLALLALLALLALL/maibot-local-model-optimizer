@@ -276,3 +276,8 @@ class LocalModelOptimizerPlugin(MaiBotPlugin):
             return []
         except Exception:  # noqa: BLE001
             return None
+
+
+def create_plugin() -> LocalModelOptimizerPlugin:
+    """Create the plugin instance (required by the MaiBot plugin center)."""
+    return LocalModelOptimizerPlugin()

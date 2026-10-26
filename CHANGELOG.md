@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0
+
+- Add `create_plugin()` factory required by the MaiBot plugin center.
+- Align `host_application` / `sdk` upper bounds with tested versions.
+- Declare the `config.get` capability and drop the unused i18n block.
+
 ## 1.1.0
 
 - Remove hardcoded model names: every local setup is different.
