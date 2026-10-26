@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.3
+
+- Change `plugin_type` from `tool` to `management` to match the plugin's
+  actual role (background keep-alive + capability audit, no Tool/Command).
+- Drop the unused `config.get` capability; the plugin never calls
+  `self.ctx.config`.
+
 ## 1.2.2
 
 - Add `config_version` to the plugin config model; MaiBot refuses to load
