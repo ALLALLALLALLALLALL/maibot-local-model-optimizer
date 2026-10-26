@@ -26,6 +26,10 @@ class PluginSection(PluginConfigBase):
     __ui_icon__ = "cpu"
     __ui_order__ = 0
 
+    config_version: str = Field(
+        default="1.0.0",
+        description="配置版本号 / config version",
+    )
     enabled: bool = Field(
         default=True,
         description="启用本地模型保活与能力检查 / Enable keep-alive and capability checks",
