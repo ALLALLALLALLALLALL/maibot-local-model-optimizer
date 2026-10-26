@@ -1,0 +1,9 @@
+[plugin]
+enabled = true
+base_url = "http://127.0.0.1:11434"
+models = "qwen2.5:14b,qwen3.5:9b,nomic-embed-text"
+planner_model = "qwen2.5:14b"
+vision_model = "qwen3.5:9b"
+keep_alive = -1
+check_interval_seconds = 120
+warmup_prompt = "hi"
