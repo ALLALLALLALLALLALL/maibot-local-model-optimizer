@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "id": "maibot-local-model-optimizer",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "name": "本地模型优化 / Local Model Optimizer",
   "description": "让 Ollama 本地模型常驻不卸载，并在启动时检查 planner 是否支持工具调用、vlm 是否支持识图。Keeps Ollama models warm and validates tools/vision capabilities.",
   "author": {

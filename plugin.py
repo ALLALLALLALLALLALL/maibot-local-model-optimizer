@@ -193,8 +193,29 @@ class LocalModelOptimizerPlugin(MaiBotPlugin):
                 )
             return True
         except Exception as exc:  # noqa: BLE001
-            self.ctx.logger.warning("[本地模型优化] %s 预热异常 / warm error: %s", model, exc)
-            return False
+            # Embedding-only models reject /api/generate; warm them via /api/embed.
+            embed_payload = {
+                "model": model,
+                "input": self.config.plugin.warmup_prompt,
+                "keep_alive": int(self.config.plugin.keep_alive),
+            }
+            try:
+                async with session.post(
+                    f"{base}/api/embed",
+                    json=embed_payload,
+                    timeout=aiohttp.ClientTimeout(total=300),
+                ) as resp:
+                    resp.raise_for_status()
+                    await resp.json()
+                return True
+            except Exception as embed_exc:  # noqa: BLE001
+                self.ctx.logger.warning(
+                    "[本地模型优化] %s 预热异常 / warm error: generate=%s; embed=%s",
+                    model,
+                    exc,
+                    embed_exc,
+                )
+                return False
 
     async def _check_capabilities(self, session: aiohttp.ClientSession, base: str) -> None:
         cfg = self.config.plugin

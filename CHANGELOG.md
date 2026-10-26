@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.4
+
+- Warm embedding-only models via `/api/embed`; `/api/generate` returns 400 for
+  them (seen with `nomic-embed-text`).
+
 ## 1.2.3
 
 - Change `plugin_type` from `tool` to `management` to match the plugin's
